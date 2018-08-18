@@ -20,13 +20,16 @@ public class PlayerMovement : MonoBehaviour
     CharacterController controller;
     Vector3 movementShit = Vector3.zero;
     public Animator anim;
-    public SphereCollider playerColRadius;
 
     [Header("True or False")]
     public bool hiding = false;
     public bool crouched = false;
     public bool CrouchKeyUp = false;
     public bool sprinting = false;
+    public bool readyToBounce = false;
+
+    [Header("PlayerSuperJump")]
+    public float SuperTimer;
 
     void Start()
     {
@@ -35,14 +38,15 @@ public class PlayerMovement : MonoBehaviour
 
         //enemy
         enemyScript = GameObject.Find("Enemy").GetComponent<Enemy>();
-
-        playerColRadius = GetComponent<SphereCollider>();
+        
     }
 
     void Update()
     {
-        HidingRanges();
+
         Crouch();
+        //Jump();
+        HidingRanges();
         Sprint();
         Movement();
     }
@@ -104,22 +108,22 @@ public class PlayerMovement : MonoBehaviour
     }
     void Crouch()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl))
+        if (Input.GetKeyDown(KeyCode.C) && crouched == false)
         {
             anim.SetBool("crouched", true);
-            CrouchKeyUp = true;
+           // CrouchKeyUp = true;
             crouched = true;
-            speed = 1.5f;
+           // speed = 1.5f;
         }
-        if (Input.GetKeyUp(KeyCode.LeftControl))
+        else if (Input.GetKeyDown(KeyCode.C) && crouched == true)
         {
-            CrouchKeyUp = false;
-            if (!CrouchKeyUp && !hiding)
-            {
+            //CrouchKeyUp = false;
+            //if (!CrouchKeyUp && !hiding)
+            //{
                 crouched = false;
                 anim.SetBool("crouched", false);
-                speed = 2f;
-            }
+            //    speed = 2f;
+            //}
         }
     }
     void Sprint()
@@ -141,19 +145,18 @@ public class PlayerMovement : MonoBehaviour
         {
             PlayerEaten();
         }
-        if (PlayerCol.gameObject.tag == "Table")
+        /*if (PlayerCol.gameObject.tag == "Table")
         {
             hiding = true;
-        }
+        }*/
         if (PlayerCol.gameObject.tag == "Void")
         {
             PlayerEaten();
         }
-
     }
     void OnTriggerExit(Collider PlayerCol)
     {
-        if (PlayerCol.gameObject.tag == "Table")
+       /* if (PlayerCol.gameObject.tag == "Table")
         {
             hiding = false;
             if(!CrouchKeyUp && !hiding)
@@ -161,10 +164,19 @@ public class PlayerMovement : MonoBehaviour
                 anim.SetBool("crouched", false);
                 speed = 2f;
             }
-        }
+        }*/
     }
     public void PlayerEaten()//Player has been killed by Creature
     {
         SceneManager.LoadScene("Prototype");
     }
+   /* void Jump()
+    {
+        if(readyToBounce)
+        {
+            SuperTimer += Time.deltaTime;
+            jumpHeight = 300;
+            gravity = 0.1f;
+        }
+    }*/
 }

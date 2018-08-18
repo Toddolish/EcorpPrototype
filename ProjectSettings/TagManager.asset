@@ -14,6 +14,7 @@ TagManager:
   - LOCK
   - Void
   - CRYSTAL
+  - BOUNCE
   layers:
   - Default
   - TransparentFX
@@ -24,7 +25,7 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - 
+  - canJump
   - 
   - 
   - 
