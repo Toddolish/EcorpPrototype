@@ -14,6 +14,13 @@ public class flameScript : MonoBehaviour {
     [Header("Flame Follow Speed")]
     public float speed;
 
+    public bool followingPlayer;
+    public string followPlayer;
+    public string followPlayerCheck;
+
+    [Header("IMPORTANT PUZZLE INDEX")]
+    public string puzzleRef;
+
     public enum State
     {
         seekCrystal, seekPlayer, noTarget
@@ -32,34 +39,32 @@ public class flameScript : MonoBehaviour {
 
     void Update()
     {
-        //transform.RotateAround(Vector3.up, new Vector3(0,0,0), speed * Time.deltaTime * 2);
-        switch (currentState)
-        {
-            case State.noTarget:
-                FlameCollider.enabled = true;
-                transform.position = Vector3.MoveTowards(transform.position, transform.position, speed * Time.deltaTime);
-                break;
+            //transform.RotateAround(Vector3.up, new Vector3(0,0,0), speed * Time.deltaTime * 2);
+            switch (currentState)
+            {
+                case State.noTarget:
+                    FlameCollider.enabled = true;
+                    transform.position = Vector3.MoveTowards(transform.position, transform.position, speed * Time.deltaTime);
+                    break;
 
-            case State.seekPlayer:
-                FlameCollider.enabled = false;
-                transform.position = Vector3.MoveTowards(transform.position, HolsterTarget.position, speed * Time.deltaTime);
-                break;
+                case State.seekPlayer:
+                    FlameCollider.enabled = false;
+                    transform.position = Vector3.MoveTowards(transform.position, HolsterTarget.position, speed * Time.deltaTime);
+                    break;
 
-            case State.seekCrystal:
-                PlayerPickupScript.FlameFollow = false;
-                FlameCollider.enabled = false;
-                transform.position = Vector3.MoveTowards(transform.position, crystalTarget.position, speed * Time.deltaTime);
-                break;
-        }
-
-        if (PlayerPickupScript.FlameFollow)
-        {
-            currentState = State.seekPlayer;
-        }
-        if (PlayerPickupScript.crystalActive)
-        {
-            currentState = State.seekCrystal;
-        }
-
+                case State.seekCrystal:
+                followingPlayer = false;
+                    FlameCollider.enabled = false;
+                    transform.position = Vector3.MoveTowards(transform.position, crystalTarget.position, speed * Time.deltaTime);
+                    break;
+            }
+            if (followingPlayer == true)
+            {
+                currentState = State.seekPlayer;
+            }
+            if (PlayerPickupScript.crystalActive)
+            {
+                currentState = State.seekCrystal;
+            }
     }
 }

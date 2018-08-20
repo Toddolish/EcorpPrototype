@@ -8,21 +8,28 @@ public class Crystal : MonoBehaviour
     public Material crystalUnlit;
     public Material crystalLit;
 
+    [Header("IMPORTANT PUZZLE INDEX")]
+    public string puzzleRef;
+
     PlayerSelect playerSelectScript;
     MeshRenderer myMesh;
+    flameScript flameScript;
 
 	void Start ()
     {
         playerSelectScript = GameObject.Find("Player").GetComponent<PlayerSelect>();
         myMesh = GetComponent<MeshRenderer>();
+        flameScript = GameObject.Find("BlueFlame").GetComponent<flameScript>();
     }
 	
 	void Update ()
     {
-        if(playerSelectScript.crystalActive)
+        if (puzzleRef == flameScript.puzzleRef)
         {
-            myMesh.material = crystalLit;
-
+            if (playerSelectScript.crystalActive)
+            {
+                myMesh.material = crystalLit;
+            }
         }
 
     }

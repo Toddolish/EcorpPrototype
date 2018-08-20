@@ -12,11 +12,11 @@ public class PlayerSelect : MonoBehaviour
 
     [SerializeField]
     public int FlameCount = 0;
+    flameScript flamerScript;
 
     [SerializeField]
     float timer;
     public bool FlamePickedUp;
-    public bool FlameFollow;
     public bool neerCrystalLock;
     public bool crystalActive;
 
@@ -29,6 +29,7 @@ public class PlayerSelect : MonoBehaviour
         Player = GameObject.Find("Player");
         mainCam = GameObject.FindGameObjectWithTag("MainCamera");
 
+        flamerScript = GameObject.Find("BlueFlame").GetComponent<flameScript>();
         flameText =  GameObject.Find("Flame_Text").GetComponent<Text>();
         flameText.enabled = false;
 
@@ -145,7 +146,7 @@ public class PlayerSelect : MonoBehaviour
                 //Collect Flame
                 FlameCount ++;
                 flameText.enabled = false;
-                FlameFollow = true;
+                flamerScript.followingPlayer = true;
                 FlamePickedUp = true;
             }
         }
