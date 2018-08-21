@@ -9,13 +9,14 @@ public class PlayerMovement : MonoBehaviour
 
     #region variables
     [Header("Variables")]
-    public float jumpHeight;
+    float jumpHeight;
     public float rayDistance;
     float smooth;
     float gravity = 1;
-#endregion
+    [Space(15)]
+    #endregion
     #region Speeds
-    [Header("SPEEDS")]
+    [Header("MOVEMENT SPEEDS")]
     [Header("Original Speed")]
     public float originalSpeed;
 
@@ -38,6 +39,31 @@ public class PlayerMovement : MonoBehaviour
     [Range(0.1f,2)]
     public float SlideDistance;
 
+    [Space(50)]
+
+    [Header("JUMP HEIGHTS")]
+
+    [Header("Normal Jump Height")]
+    public float normalJumpHeight;
+
+    [Header("Sprint Jump Height")]
+    public float sprintJumpHeight;
+
+    [Space(50)]
+
+    [Header("GRAVITY")]
+
+    [Header("Normal Gravity")]
+    [Range(0.1f, 2)]
+    public float normalGravity;
+
+    [Header("Sprint Gravity")]
+    [Range(0.1f, 2)]
+    public float sprintJumpGravity;
+
+    [Header("Glide Gravity")]
+    [Range(0.1f, 2)]
+    public float glideGravity;
     #endregion
 
     Enemy enemyScript;
@@ -49,6 +75,8 @@ public class PlayerMovement : MonoBehaviour
     Animator anim;
 
     #region bools
+    [Space(50)]
+
     [Header("True or False")]
     public bool hiding = false;
     public bool crouched = false;
@@ -81,7 +109,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (hiding == true && crouched == true)
         {
-            enemyScript.currentState = Enemy.State.Patrol;
+            //enemyScript.currentState = Enemy.State.feeding; //when player is hiding enemy will go back to feeding state
             enemyScript.seekRadius = 1;
         }
     }
@@ -185,16 +213,15 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump") && !sprinting && !sliding)
         {
             jumping = true;
-            jumpHeight = 12;
-            gravity = 1f;
+            jumpHeight = normalJumpHeight;
+            gravity = normalGravity;
             movement.y = jumpHeight * Time.deltaTime;
         }
         if (Input.GetButtonDown("Jump") && sprinting && !sliding)
         {
             jumping = true;
-            originalSpeed = 6f;
-            jumpHeight = 12;
-            gravity = 0.7f;
+            jumpHeight = sprintJumpHeight;
+            gravity = sprintJumpGravity;
             movement.y = jumpHeight * Time.deltaTime;
         }
     }
@@ -204,7 +231,7 @@ public class PlayerMovement : MonoBehaviour
         {
             PlayerEaten();
         }
-        if (PlayerCol.gameObject.tag == "Table")
+        if (PlayerCol.gameObject.tag == "HIDING")
         {
             hiding = true;
         }
@@ -215,14 +242,10 @@ public class PlayerMovement : MonoBehaviour
     }
     void OnTriggerExit(Collider PlayerCol)
     {
-        if (PlayerCol.gameObject.tag == "Table")
+        if (PlayerCol.gameObject.tag == "HIDING")
         {
             hiding = false;
-            if(!CrouchKeyUp && !hiding)
-            {
-                anim.SetBool("crouched", false);
-                originalSpeed = walkSpeed;
-            }
+            originalSpeed = walkSpeed;
         }
     }
     public void PlayerEaten()//Player has been killed by Creature

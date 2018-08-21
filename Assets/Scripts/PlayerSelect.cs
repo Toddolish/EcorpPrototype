@@ -64,14 +64,10 @@ public class PlayerSelect : MonoBehaviour
         {
             flameText.enabled = true;
         }
-        if(other.gameObject.tag =="LOCK")
-        {
-            neerCrystalLock = true;
-        }
         if (other.gameObject.tag == "CRYSTAL")
         {
+            neerCrystalLock = true;
             crystalText.enabled = true;
-            //neerCrystalLock = true;
         }
         if(other.gameObject.tag == "chapter1")
         {
