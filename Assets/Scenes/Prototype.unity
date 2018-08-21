@@ -4158,7 +4158,7 @@ GameObject:
   m_Layer: 0
   m_Name: Waypoint (2)
   m_TagString: Untagged
-  m_Icon: {fileID: 1206586993520771344, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -5388,7 +5388,7 @@ GameObject:
   m_Layer: 0
   m_Name: Waypoints_Patrol
   m_TagString: Untagged
-  m_Icon: {fileID: 7148428337604731935, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -5541,7 +5541,7 @@ GameObject:
   m_Layer: 0
   m_Name: Waypoint (4)
   m_TagString: Untagged
-  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -6019,7 +6019,7 @@ GameObject:
   m_Layer: 0
   m_Name: Waypoint (1)
   m_TagString: Untagged
-  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -7331,7 +7331,7 @@ GameObject:
   m_Layer: 0
   m_Name: Waypoint_1
   m_TagString: Untagged
-  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -13720,7 +13720,7 @@ GameObject:
   m_Layer: 0
   m_Name: Waypoints_Feeding
   m_TagString: Untagged
-  m_Icon: {fileID: 7148428337604731935, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -14016,9 +14016,9 @@ MonoBehaviour:
   SlideDistance: 0.5
   normalJumpHeight: 12
   sprintJumpHeight: 12
-  normalGravity: 0.8
+  normalGravity: 2
   sprintJumpGravity: 0.5
-  glideGravity: 0
+  glideGravity: 0.5
   hiding: 0
   crouched: 0
   CrouchKeyUp: 0
@@ -14026,6 +14026,7 @@ MonoBehaviour:
   readyToBounce: 0
   sliding: 0
   jumping: 0
+  gliding: 0
 --- !u!143 &1725615772
 CharacterController:
   m_ObjectHideFlags: 0
@@ -20575,7 +20576,7 @@ GameObject:
   m_Layer: 0
   m_Name: Waypoint (3)
   m_TagString: Untagged
-  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1

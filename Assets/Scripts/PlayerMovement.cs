@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     public float rayDistance;
     float smooth;
     float gravity = 1;
+    private float initialGravity;
     [Space(15)]
     #endregion
     #region Speeds
@@ -36,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
     public float rotationSpeed;
 
     [Header("Slide Distance")]
-    [Range(0.1f,2)]
+    [Range(0.1f, 2)]
     public float SlideDistance;
 
     [Space(50)]
@@ -85,16 +86,17 @@ public class PlayerMovement : MonoBehaviour
     public bool readyToBounce = false;
     public bool sliding = false;
     public bool jumping = false;
-#endregion
+    public bool gliding = false;
+    #endregion
 
     void Start()
     {
         anim = this.gameObject.GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
-
+        initialGravity = gravity;
         //enemy
         enemyScript = GameObject.Find("Enemy").GetComponent<Enemy>();
-        
+
     }
 
     void Update()
@@ -102,8 +104,9 @@ public class PlayerMovement : MonoBehaviour
         Crouch();
         Slide();
         HidingRanges();
-        Sprint();
         Movement();
+        Glide();
+
     }
     void HidingRanges()
     {
@@ -131,21 +134,30 @@ public class PlayerMovement : MonoBehaviour
     }
     void Movement()
     {
+
         if (IsGrounded())
         {
             float inputH = Input.GetAxis("Horizontal");
             float inputV = Input.GetAxis("Vertical");
             //movement
-            movement = new Vector3(0, 0, inputV);
-            movement = transform.TransformDirection(movement);
+            movement = new Vector3(inputH, 0, inputV);
+            // movement = transform.TransformDirection(movement);
             movement *= originalSpeed * Time.deltaTime;
 
             //rotation
+            Vector3 moveDir = new Vector3(inputH, 0f, inputV);
+            if (moveDir.magnitude > 0)
+            {      //rotate the player to that moveDir
+                transform.rotation = Quaternion.LookRotation(moveDir);
+            }
+
             float horizontalMovement = inputH * rotationSpeed * Time.deltaTime;
             transform.Rotate(Vector3.up, horizontalMovement);
             jumping = false;
             Jump();
+            Sprint();
         }
+
         movement.y -= gravity * Time.deltaTime;
         controller.Move(movement);
     }
@@ -197,7 +209,7 @@ public class PlayerMovement : MonoBehaviour
                 sprinting = true;
                 originalSpeed = sprintSpeed;
             }
-            if(sliding)
+            if (sliding)
             {
                 originalSpeed = slideSpeed;
             }
@@ -224,6 +236,21 @@ public class PlayerMovement : MonoBehaviour
             gravity = sprintJumpGravity;
             movement.y = jumpHeight * Time.deltaTime;
         }
+    }
+    void Glide()
+    {
+        if (Input.GetKey(KeyCode.Space) && !IsGrounded())
+        {
+
+            gravity = glideGravity;
+            gliding = true;
+        }
+        else
+        {
+            gravity = initialGravity;
+            gliding = false;
+        }
+
     }
     void OnTriggerEnter(Collider PlayerCol)
     {
