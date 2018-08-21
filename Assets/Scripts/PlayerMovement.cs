@@ -7,33 +7,61 @@ using UnityEngine.SceneManagement;
 public class PlayerMovement : MonoBehaviour
 {
 
-    Enemy enemyScript;
-
+    #region variables
     [Header("Variables")]
-    public float speed;
     public float jumpHeight;
-    public float rotationSpeed;
     public float rayDistance;
-    public float smooth;
-    public float gravity = 1;
+    float smooth;
+    float gravity = 1;
+#endregion
+    #region Speeds
+    [Header("SPEEDS")]
+    [Header("Original Speed")]
+    public float originalSpeed;
 
+    [Header("Crouch Speed")]
+    public float crouchSpeed;
+
+    [Header("Sprint Speed")]
+    public float sprintSpeed;
+
+    [Header("Slide Speed")]
+    public float slideSpeed;
+
+    [Header("Walk Speed")]
+    public float walkSpeed;
+
+    [Header("Rotation Speed")]
+    public float rotationSpeed;
+
+    [Header("Slide Distance")]
+    [Range(0.1f,2)]
+    public float SlideDistance;
+
+    #endregion
+
+    Enemy enemyScript;
     CharacterController controller;
-    Vector3 movementShit = Vector3.zero;
-    public Animator anim;
+    Vector3 movement = Vector3.zero;
+    float slideTimer;
 
+    [Header("Players Animator")]
+    Animator anim;
+
+    #region bools
     [Header("True or False")]
     public bool hiding = false;
     public bool crouched = false;
     public bool CrouchKeyUp = false;
     public bool sprinting = false;
     public bool readyToBounce = false;
-
-    [Header("PlayerSuperJump")]
-    public float SuperTimer;
+    public bool sliding = false;
+    public bool jumping = false;
+#endregion
 
     void Start()
     {
-        anim.GetComponent<Animator>();
+        anim = this.gameObject.GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
 
         //enemy
@@ -43,9 +71,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-
         Crouch();
-        //Jump();
+        Slide();
         HidingRanges();
         Sprint();
         Movement();
@@ -81,62 +108,94 @@ public class PlayerMovement : MonoBehaviour
             float inputH = Input.GetAxis("Horizontal");
             float inputV = Input.GetAxis("Vertical");
             //movement
-            movementShit = new Vector3(0, 0, inputV);
-            movementShit = transform.TransformDirection(movementShit);
-            movementShit *= speed * Time.deltaTime;
+            movement = new Vector3(0, 0, inputV);
+            movement = transform.TransformDirection(movement);
+            movement *= originalSpeed * Time.deltaTime;
 
             //rotation
             float horizontalMovement = inputH * rotationSpeed * Time.deltaTime;
             transform.Rotate(Vector3.up, horizontalMovement);
-
-            if (Input.GetButtonDown("Jump") && !sprinting)
+            jumping = false;
+            Jump();
+        }
+        movement.y -= gravity * Time.deltaTime;
+        controller.Move(movement);
+    }
+    void Slide()
+    {
+        if (Input.GetKeyDown(KeyCode.C) && sprinting && !jumping)
+        {
+            sliding = true;
+        }
+        if (sliding)
+        {
+            slideTimer += Time.deltaTime;
+            anim.SetBool("crouched", true);
+            originalSpeed = slideSpeed;
+            if (slideTimer > SlideDistance)
             {
-                jumpHeight = 12;
-                gravity = 1f;
-                movementShit.y = jumpHeight * Time.deltaTime;
-            }
-            if (Input.GetButtonDown("Jump") && sprinting)
-            {
-                speed = 6f;
-                jumpHeight = 12;
-                gravity = 0.7f;
-                movementShit.y = jumpHeight * Time.deltaTime;
+                originalSpeed = walkSpeed;
+                sliding = false;
+                slideTimer = 0;
+                anim.SetBool("crouched", false);
             }
         }
-        movementShit.y -= gravity * Time.deltaTime;
-        controller.Move(movementShit);
     }
     void Crouch()
     {
-        if (Input.GetKeyDown(KeyCode.C) && crouched == false)
+        if (Input.GetKeyDown(KeyCode.C) && crouched == false && !sprinting)
         {
             anim.SetBool("crouched", true);
-           // CrouchKeyUp = true;
             crouched = true;
-           // speed = 1.5f;
+            originalSpeed = crouchSpeed;
         }
         else if (Input.GetKeyDown(KeyCode.C) && crouched == true)
         {
-            //CrouchKeyUp = false;
-            //if (!CrouchKeyUp && !hiding)
-            //{
+            CrouchKeyUp = false;
+            if (!CrouchKeyUp && !hiding)
+            {
                 crouched = false;
                 anim.SetBool("crouched", false);
-            //    speed = 2f;
-            //}
+                originalSpeed = walkSpeed;
+            }
         }
     }
     void Sprint()
     {
         if (Input.GetKey(KeyCode.LeftShift) && !crouched)
         {
-            sprinting = true;
-            speed = 4f;
+            if (!sliding)
+            {
+                sprinting = true;
+                originalSpeed = sprintSpeed;
+            }
+            if(sliding)
+            {
+                originalSpeed = slideSpeed;
+            }
         }
         else
         {
             sprinting = false;
-            speed = 2f;
+            originalSpeed = walkSpeed;
+        }
+    }
+    void Jump()
+    {
+        if (Input.GetButtonDown("Jump") && !sprinting && !sliding)
+        {
+            jumping = true;
+            jumpHeight = 12;
+            gravity = 1f;
+            movement.y = jumpHeight * Time.deltaTime;
+        }
+        if (Input.GetButtonDown("Jump") && sprinting && !sliding)
+        {
+            jumping = true;
+            originalSpeed = 6f;
+            jumpHeight = 12;
+            gravity = 0.7f;
+            movement.y = jumpHeight * Time.deltaTime;
         }
     }
     void OnTriggerEnter(Collider PlayerCol)
@@ -145,10 +204,10 @@ public class PlayerMovement : MonoBehaviour
         {
             PlayerEaten();
         }
-        /*if (PlayerCol.gameObject.tag == "Table")
+        if (PlayerCol.gameObject.tag == "Table")
         {
             hiding = true;
-        }*/
+        }
         if (PlayerCol.gameObject.tag == "Void")
         {
             PlayerEaten();
@@ -156,27 +215,18 @@ public class PlayerMovement : MonoBehaviour
     }
     void OnTriggerExit(Collider PlayerCol)
     {
-       /* if (PlayerCol.gameObject.tag == "Table")
+        if (PlayerCol.gameObject.tag == "Table")
         {
             hiding = false;
             if(!CrouchKeyUp && !hiding)
             {
                 anim.SetBool("crouched", false);
-                speed = 2f;
+                originalSpeed = walkSpeed;
             }
-        }*/
+        }
     }
     public void PlayerEaten()//Player has been killed by Creature
     {
         SceneManager.LoadScene("Prototype");
     }
-   /* void Jump()
-    {
-        if(readyToBounce)
-        {
-            SuperTimer += Time.deltaTime;
-            jumpHeight = 300;
-            gravity = 0.1f;
-        }
-    }*/
 }

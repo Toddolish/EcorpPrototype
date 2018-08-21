@@ -13,6 +13,8 @@ public class PlayerSelect : MonoBehaviour
     [SerializeField]
     public int FlameCount = 0;
     flameScript flamerScript;
+    Crystal crystalScript;
+    Enemy enemyScript;
 
     [SerializeField]
     float timer;
@@ -24,6 +26,8 @@ public class PlayerSelect : MonoBehaviour
     public Light lanternLight;
     public bool lightIsOn;
 
+    Door doorScript;
+
 	void Start ()
     {
         Player = GameObject.Find("Player");
@@ -33,9 +37,12 @@ public class PlayerSelect : MonoBehaviour
         flameText =  GameObject.Find("Flame_Text").GetComponent<Text>();
         flameText.enabled = false;
 
+        crystalScript = GameObject.Find("Crystal").GetComponent<Crystal>();
         crystalText = GameObject.Find("Crystal_Text").GetComponent<Text>();
         crystalText.enabled = false;
         crystalActive = false;
+
+        enemyScript = GameObject.Find("Enemy").GetComponent<Enemy>();
 
         #region Light
         lanternLight = GameObject.Find("Lantern_Light").GetComponent<Light>();
@@ -48,8 +55,8 @@ public class PlayerSelect : MonoBehaviour
 	void Update ()
     {
         Light();
-        collectFlame();
-        activateCrystal();
+        //collectFlame();
+        //activateCrystal();
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -64,7 +71,26 @@ public class PlayerSelect : MonoBehaviour
         if (other.gameObject.tag == "CRYSTAL")
         {
             crystalText.enabled = true;
-            neerCrystalLock = true;
+            //neerCrystalLock = true;
+        }
+        if(other.gameObject.tag == "chapter1")
+        {
+            enemyScript.currentState = Enemy.State.Patrol;
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "KEY")
+        {
+            flameText.enabled = false;
+        }
+        if (other.gameObject.tag == "LOCK")
+        {
+            neerCrystalLock = false;
+        }
+        if (other.gameObject.tag == "CRYSTAL")
+        {
+            crystalText.enabled = false;
         }
     }
     private void OnTriggerExit(Collider other)
@@ -128,7 +154,7 @@ public class PlayerSelect : MonoBehaviour
             lightIsOn = false;
         }
     }
-    void collectFlame()
+    /*void collectFlame()
     {
         if (FlamePickedUp)
         {
@@ -150,15 +176,15 @@ public class PlayerSelect : MonoBehaviour
                 FlamePickedUp = true;
             }
         }
-    }
-    void activateCrystal()
+    }*/
+    /*void activateCrystal()
     {
-        if(crystalText.enabled == true && FlameCount == 1)
+        if(crystalText.enabled == true && flamerScript.followingPlayer)
         {
             if(Input.GetKeyDown(KeyCode.E))
             {
-                crystalActive = true;
+                crystalScript.ActiveIndex++;
             }
         }
-    }
+    }*/
 }

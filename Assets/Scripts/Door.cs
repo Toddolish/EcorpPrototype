@@ -6,28 +6,40 @@ public class Door : MonoBehaviour
 {
     Animator doorAnim;
     PlayerSelect playerSelectScript;
-
-    [Header("IMPORTANT PUZZLE INDEX")]
-    public string puzzleRef;
-
     Crystal crystalScript;
+
+    public int index = -1;
+    public int currentKeyNumber;
+
+    public enum state
+    {
+        closed, open
+    }
+    public state curState = state.closed;
 
     void Start()
     {
         doorAnim = this.gameObject.GetComponent<Animator>();
         playerSelectScript = GameObject.Find("Player").GetComponent<PlayerSelect>();
-
         crystalScript = GameObject.Find("Crystal").GetComponent<Crystal>();
     }
     void Update()
     {
-        if (puzzleRef == crystalScript.puzzleRef)
+        if(currentKeyNumber == crystalScript.currentKeyNumber)
         {
-            if (playerSelectScript.crystalActive == true)
-            {
+            curState = state.open;
+        }
+        switch (curState)
+        {
+            case state.closed:
+                //DOOR IS CLOSED
+                doorAnim.SetBool("open", false);
+                break;
+
+            case state.open:
+                //DOOR IS OPEN
                 doorAnim.SetBool("open", true);
-                playerSelectScript.FlameCount = 0;
-            }
+                break;
         }
     }
 }

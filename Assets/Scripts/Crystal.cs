@@ -15,6 +15,10 @@ public class Crystal : MonoBehaviour
     MeshRenderer myMesh;
     flameScript flameScript;
 
+    [SerializeField]
+    bool crystalActive;
+    public int currentKeyNumber;
+
 	void Start ()
     {
         playerSelectScript = GameObject.Find("Player").GetComponent<PlayerSelect>();
@@ -24,13 +28,26 @@ public class Crystal : MonoBehaviour
 	
 	void Update ()
     {
-        if (puzzleRef == flameScript.puzzleRef)
+        ///////////////////IF INDEX IS == 1 THEN LIGHT UP BLUE///////////////////////
+        if (currentKeyNumber == flameScript.currentKeyNumber)
         {
-            if (playerSelectScript.crystalActive)
+            myMesh.material = crystalLit;
+        }
+        else if(currentKeyNumber >= flameScript.currentKeyNumber)
+        {
+            currentKeyNumber = flameScript.currentKeyNumber;
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            ///////////////////////IF TEXT IS ENABLED THEN (E) WILL INCREASE INDEX/////////////////////
+            playerSelectScript.crystalText.enabled = true;
+            if (Input.GetKey(KeyCode.E))
             {
-                myMesh.material = crystalLit;
+                currentKeyNumber++;
             }
         }
-
-    }
+    } 
 }

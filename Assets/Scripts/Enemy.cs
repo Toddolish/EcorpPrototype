@@ -8,7 +8,7 @@ public class Enemy : MonoBehaviour
     //declaration
     public enum State
     {
-        Patrol, Seek
+        Patrol, Seek, feeding
     }
     [Header("SEEK RADIUS")]
 
@@ -24,9 +24,11 @@ public class Enemy : MonoBehaviour
     [Header("When Crouched with light is ON")]    
     public float lightAndCrouchRadius;
 
+    Animator anim;
     public State currentState = State.Patrol;
     public Transform Player;
     public Transform waypointParent;
+    public Transform feedingPoint;
     public float seekRadius = 5f;
 
     //create a collection of transforms.
@@ -51,6 +53,7 @@ public class Enemy : MonoBehaviour
         waypoints = waypointParent.GetComponentsInChildren<Transform>();
         playerScript = GameObject.Find("Player").GetComponent<PlayerMovement>();
         playerSelectScript = GameObject.Find("Player").GetComponent<PlayerSelect>();
+        anim = GetComponent<Animator>();
     }
 
     //////////////////update
@@ -76,6 +79,11 @@ public class Enemy : MonoBehaviour
                 Seek();
                 break;
 
+            case State.feeding:
+                //seek state
+                Feed();
+                break;
+
             default:
                 break;
         }
@@ -88,6 +96,7 @@ public class Enemy : MonoBehaviour
     }
     void Patrol()
     {
+        anim.SetBool("eating", false);
         //move towards waypoints
         moveSpeed = 1;
         Transform point = waypoints[currentIndex];
@@ -112,6 +121,7 @@ public class Enemy : MonoBehaviour
     }
     void Seek()
     {
+        anim.SetBool("eating", true);
         moveSpeed = 3.8f;
         //move towards player
         float distance = Vector3.Distance(agent.transform.position, Player.position);
@@ -173,5 +183,13 @@ public class Enemy : MonoBehaviour
         {
             seekRadius = 12;
         }
+    }
+    void Feed()
+    {
+        anim.SetBool("eating", false);
+        moveSpeed = 2;
+        Transform point = waypoints[currentIndex];
+        float distance = Vector3.Distance(agent.transform.position, point.position);
+        agent.SetDestination(feedingPoint.position);
     }
 }

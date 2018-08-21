@@ -132,7 +132,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: CrouchDown
-  m_Speed: 6
+  m_Speed: 12
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 1101259895624796314}

@@ -13,20 +13,13 @@ public class flameScript : MonoBehaviour {
 
     [Header("Flame Follow Speed")]
     public float speed;
-
+    public int currentKeyNumber;
     public bool followingPlayer;
-    public string followPlayer;
-    public string followPlayerCheck;
-
-    [Header("IMPORTANT PUZZLE INDEX")]
-    public string puzzleRef;
-
     public enum State
     {
         seekCrystal, seekPlayer, noTarget
     }
     public State currentState = State.noTarget;
-    
 
     void Start()
     {
@@ -36,7 +29,13 @@ public class flameScript : MonoBehaviour {
         crystalScript = GameObject.Find("Crystal").GetComponent<Crystal>();
         crystalTarget = GameObject.Find("CrystalHolster").GetComponent<Transform>();
     }
-
+    private void OnTriggerEnter(Collider other)
+    {
+       if (other.gameObject.tag == "Player")
+        {
+            followingPlayer = true;
+        }
+    }
     void Update()
     {
             //transform.RotateAround(Vector3.up, new Vector3(0,0,0), speed * Time.deltaTime * 2);
@@ -53,7 +52,7 @@ public class flameScript : MonoBehaviour {
                     break;
 
                 case State.seekCrystal:
-                followingPlayer = false;
+                    followingPlayer = false;
                     FlameCollider.enabled = false;
                     transform.position = Vector3.MoveTowards(transform.position, crystalTarget.position, speed * Time.deltaTime);
                     break;
@@ -62,7 +61,7 @@ public class flameScript : MonoBehaviour {
             {
                 currentState = State.seekPlayer;
             }
-            if (PlayerPickupScript.crystalActive)
+            if (crystalScript.currentKeyNumber == currentKeyNumber && followingPlayer == true)
             {
                 currentState = State.seekCrystal;
             }
